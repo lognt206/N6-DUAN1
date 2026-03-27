@@ -1,22 +1,31 @@
-<?php 
+<?php
+session_start();
 
-// Require file Common
-require_once './commons/env.php'; // Khai báo biến môi trường
-require_once './commons/function.php'; // Hàm hỗ trợ
+// COMMON
+require_once './commons/env.php';
+require_once './commons/function.php';
 
-// Require toàn bộ file Controllers
-require_once './controllers/HomeController.php';
+// CONTROLLER
+require_once './controllers/admincontroller.php';
 
-// Require toàn bộ file Models
-require_once './models/Product.php';
+// MODEL
+require_once './models/ProductModel.php';
 
-// Route
-$act = $_GET['act'] ?? '/';
+// ROUTE
+$act = $_GET['act'] ?? 'dashboard';
 
-switch ($act) {
-    // Trang chủ
-    case '/':
-        (new HomeController())->home();
-        break;
-    
+match ($act) {
+
+    // ===== DASHBOARD =====
+    'dashboard' => (new admincontroller())->dashboard(),
+
+    // ===== PRODUCT =====
+    'product' => (new admincontroller())->product(),
+    'product/create' => (new admincontroller())->create_product(),
+    'product/store' => (new admincontroller())->store_product(),
+    'product/edit' => (new admincontroller())->edit_product(),
+    'product/update' => (new admincontroller())->update_product(),
+    'product/delete' => (new admincontroller())->delete_product(),
+
+    default => (new admincontroller())->dashboard(),
 };
