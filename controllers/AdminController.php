@@ -3,7 +3,6 @@ require_once __DIR__ . '/../models/ProductModel.php';
 
 class admincontroller
 {
-
     public $ProductModel;
 
     public function __construct()
@@ -14,8 +13,18 @@ class admincontroller
     // ===== DASHBOARD =====
     public function dashboard()
     {
-        include PATH_ROOT . "views/admin/dashboard.php";
+        // Thống kê
+        $totalProducts = count($this->ProductModel->all());
 
+        // demo (bạn có thể làm thật sau)
+        $totalCustomers = 0;
+        $totalOrders = 0;
+        $totalRevenue = 0;
+
+        $chartLabels = [];
+        $chartValues = [];
+
+        include PATH_ROOT . "views/admin/dashboard.php";
     }
 
     // ================= PRODUCT =================
@@ -24,7 +33,7 @@ class admincontroller
     public function product()
     {
         $products = $this->ProductModel->all();
-        include PATH_ROOT . "views/admin/product/index.php";
+        include PATH_ROOT . "views/admin/product/noidung.php";
     }
 
     // Form thêm
@@ -33,14 +42,15 @@ class admincontroller
         include PATH_ROOT . "views/admin/product/add.php";
     }
 
-    // Lưu
+    // Lưu sản phẩm
     public function store_product()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $image = null;
 
-            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            // Upload ảnh
+            if (!empty($_FILES['image']['name'])) {
                 $dir = "uploads/";
                 if (!is_dir($dir)) mkdir($dir);
 
@@ -49,9 +59,14 @@ class admincontroller
             }
 
             $data = [
-                'name'  => $_POST['name'],
-                'price' => $_POST['price'],
-                'image' => $image
+                'name'        => $_POST['name'],
+                'price'       => $_POST['price'],
+                'quantity'    => $_POST['quantity'],
+                'unit'        => $_POST['unit'],
+                'category_id' => $_POST['category_id'],
+                'description' => $_POST['description'],
+                'status'      => $_POST['status'],
+                'image'       => $image
             ];
 
             $this->ProductModel->create($data);
@@ -70,7 +85,7 @@ class admincontroller
         include PATH_ROOT . "views/admin/product/edit.php";
     }
 
-    // Update
+    // Update sản phẩm
     public function update_product()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -80,17 +95,23 @@ class admincontroller
 
             $image = $old['image'];
 
-            if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            // Upload ảnh mới nếu có
+            if (!empty($_FILES['image']['name'])) {
                 $dir = "uploads/";
                 $image = time() . "_" . $_FILES['image']['name'];
                 move_uploaded_file($_FILES['image']['tmp_name'], $dir . $image);
             }
 
             $data = [
-                'id'    => $id,
-                'name'  => $_POST['name'],
-                'price' => $_POST['price'],
-                'image' => $image
+                'id'          => $id,
+                'name'        => $_POST['name'],
+                'price'       => $_POST['price'],
+                'quantity'    => $_POST['quantity'],
+                'unit'        => $_POST['unit'],
+                'category_id' => $_POST['category_id'],
+                'description' => $_POST['description'],
+                'status'      => $_POST['status'],
+                'image'       => $image
             ];
 
             $this->ProductModel->update($data);
@@ -100,8 +121,7 @@ class admincontroller
         }
     }
 
-    // Xóa
-
+    // Xóa sản phẩm
     public function delete_product()
     {
         $id = $_GET['id'];

@@ -1,5 +1,4 @@
-<?php include "views/admin/layout/header.php"; ?>
-<?php include "views/admin/layout/sidebar.php"; ?>
+<?php include "views/admin/dashboard.php"; ?>
 
 <h2>Danh sách sản phẩm</h2>
 
@@ -34,5 +33,3 @@
 <?php endforeach; ?>
 
 </table>
-
-<?php include "views/admin/layout/footer.php"; ?>

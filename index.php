@@ -16,16 +16,16 @@ $act = $_GET['act'] ?? 'dashboard';
 
 match ($act) {
 
-    // ===== DASHBOARD =====
     'dashboard' => (new admincontroller())->dashboard(),
 
-    // ===== PRODUCT =====
+    // PRODUCT
     'product' => (new admincontroller())->product(),
-    'product/create' => (new admincontroller())->create_product(),
-    'product/store' => (new admincontroller())->store_product(),
-    'product/edit' => (new admincontroller())->edit_product(),
-    'product/update' => (new admincontroller())->update_product(),
-    'product/delete' => (new admincontroller())->delete_product(),
+
+    'create_product' => (new admincontroller())->create_product(),
+    'store_product' => (new admincontroller())->store_product(),
+    'edit_product' => (new admincontroller())->edit_product(),
+    'update_product' => (new admincontroller())->update_product(),
+    'delete_product' => (new admincontroller())->delete_product(),
 
     default => (new admincontroller())->dashboard(),
 };
