@@ -1,47 +1,66 @@
 <?php
 require_once __DIR__ . '/../models/ProductModel.php';
+require_once __DIR__ . '/../models/CategoryModel.php';
 
 class admincontroller
 {
     public $ProductModel;
+    public $CategoryModel;
 
     public function __construct()
     {
         $this->ProductModel = new ProductModel();
+        $this->CategoryModel = new CategoryModel(); // 🔥 thêm
     }
 
     // ===== DASHBOARD =====
     public function dashboard()
-{
-    $totalProducts = count($this->ProductModel->all());
+    {
+        $totalProducts = count($this->ProductModel->all());
 
-    $totalCustomers = 0;
-    $totalOrders = 0;
-    $totalRevenue = 0;
+        $totalCustomers = 0;
+        $totalOrders = 0;
+        $totalRevenue = 0;
 
-    $chartLabels = [];
-    $chartValues = [];
+        $chartLabels = [];
+        $chartValues = [];
 
-    $view = PATH_ROOT . "views/admin/dashboard_content.php";
+        $view = PATH_ROOT . "views/admin/dashboard_content.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
 
-    include PATH_ROOT . "views/admin/dashboard.php"; // layout
-}
     // ================= PRODUCT =================
 
     // Danh sách
     public function product()
-{
-    $products = $this->ProductModel->all();
+    {
+        $products = $this->ProductModel->all();
 
-    $view = PATH_ROOT . "views/admin/product/noidung.php";
-
-    include PATH_ROOT . "views/admin/dashboard.php"; // layout
-}
+        $view = PATH_ROOT . "views/admin/product/noidung.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
 
     // Form thêm
     public function create_product()
     {
-        include PATH_ROOT . "views/admin/product/create.php";
+        $categories = $this->CategoryModel->all(); // 🔥 lấy từ DB
+
+        $view = PATH_ROOT . "views/admin/product/create.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    // Form sửa
+    public function edit_product()
+    {
+        $products = $this->ProductModel->all();
+
+        $id = $_GET['id'];
+        $product = $this->ProductModel->find($id);
+
+        $categories = $this->CategoryModel->all(); // 🔥 lấy từ DB (FIX)
+
+        $view = PATH_ROOT . "views/admin/product/edit.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
     }
 
     // Lưu sản phẩm
@@ -51,7 +70,6 @@ class admincontroller
 
             $image = null;
 
-            // Upload ảnh
             if (!empty($_FILES['image']['name'])) {
                 $dir = "uploads/";
                 if (!is_dir($dir)) mkdir($dir);
@@ -78,16 +96,7 @@ class admincontroller
         }
     }
 
-    // Form sửa
-    public function edit_product()
-    {
-        $id = $_GET['id'];
-        $product = $this->ProductModel->find($id);
-
-        include PATH_ROOT . "views/admin/product/update.php";
-    }
-
-    // Update sản phẩm
+    // Update
     public function update_product()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,7 +106,6 @@ class admincontroller
 
             $image = $old['image'];
 
-            // Upload ảnh mới nếu có
             if (!empty($_FILES['image']['name'])) {
                 $dir = "uploads/";
                 $image = time() . "_" . $_FILES['image']['name'];
@@ -123,7 +131,7 @@ class admincontroller
         }
     }
 
-    // Xóa sản phẩm
+    // Xóa
     public function delete_product()
     {
         $id = $_GET['id'];
@@ -131,6 +139,71 @@ class admincontroller
         $this->ProductModel->delete($id);
 
         header("Location: ?act=product");
+        exit;
+    }
+    // ===== CATEGORY =====
+
+    public function category()
+    {
+        $categories = $this->CategoryModel->all();
+
+        $view = PATH_ROOT . "views/admin/category/list.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    public function create_category()
+    {
+        $view = PATH_ROOT . "views/admin/category/create.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    public function store_category()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $data = [
+                'name' => $_POST['name']
+            ];
+
+            $this->CategoryModel->create($data);
+
+            header("Location: ?act=category");
+            exit;
+        }
+    }
+
+    public function edit_category()
+    {
+        $id = $_GET['id'];
+        $category = $this->CategoryModel->find($id);
+
+        $view = PATH_ROOT . "views/admin/category/edit.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    public function update_category()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $data = [
+                'id' => $_POST['id'],
+                'name' => $_POST['name']
+            ];
+
+            $this->CategoryModel->update($data);
+
+            header("Location: ?act=category");
+            exit;
+        }
+    }
+
+    public function delete_category()
+    {
+        $id = $_GET['id'];
+
+        $this->CategoryModel->delete($id);
+
+        header("Location: ?act=category");
         exit;
     }
 }

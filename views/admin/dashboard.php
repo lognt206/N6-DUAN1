@@ -55,8 +55,8 @@ if (session_status() === PHP_SESSION_NONE) {
         #content {
             flex: 1;
             padding: 20px;
-            padding-bottom: 60px;
-            background: #f8f9fa;
+            width: 100%;
+            max-width: 100%;
         }
 
         /* Topbar */
@@ -104,6 +104,12 @@ if (session_status() === PHP_SESSION_NONE) {
             background: #fff;
             text-align: center;
             padding: 10px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            object-fit: cover;
         }
     </style>
 </head>
