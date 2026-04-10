@@ -2,17 +2,22 @@
 require_once __DIR__ . '/../models/ProductModel.php';
 require_once __DIR__ . '/../models/CategoryModel.php';
 require_once __DIR__ . '/../models/CustomerModel.php';
+require_once __DIR__ . '/../models/OrderModel.php';
+
 class admincontroller
 {
     public $ProductModel;
     public $CategoryModel;
     public $CustomerModel;
+    public $OrderModel;
+
 
     public function __construct()
     {
         $this->ProductModel = new ProductModel();
         $this->CategoryModel = new CategoryModel();
         $this->CustomerModel = new CustomerModel();
+        $this->OrderModel = new OrderModel();
     }
 
     // ===== DASHBOARD =====
@@ -257,6 +262,47 @@ class admincontroller
         $this->CustomerModel->delete($id);
 
         header("Location: ?act=customer");
+        exit;
+    }
+    // ===== ORDER =====
+
+    public function order()
+    {
+        $orders = $this->OrderModel->all();
+
+        $view = PATH_ROOT . "views/admin/order/list.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    public function detail_order()
+    {
+        $id = $_GET['id'];
+
+        $order = $this->OrderModel->find($id);
+        $items = $this->OrderModel->getItems($id);
+
+        $view = PATH_ROOT . "views/admin/order/detail.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    public function update_order_status()
+    {
+        $id = $_GET['id'];
+        $status = $_GET['status'];
+
+        $this->OrderModel->updateStatus($id, $status);
+
+        header("Location: ?act=order");
+        exit;
+    }
+
+    public function delete_order()
+    {
+        $id = $_GET['id'];
+
+        $this->OrderModel->delete($id);
+
+        header("Location: ?act=order");
         exit;
     }
 }

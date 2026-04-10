@@ -39,5 +39,10 @@ match ($act) {
     'update_customer' => (new admincontroller())->update_customer(),
 
     'delete_customer' => (new admincontroller())->delete_customer(),
+
+    'order' => (new admincontroller())->order(),
+    'detail_order' => (new admincontroller())->detail_order(),
+    'update_order_status' => (new admincontroller())->update_order_status(),
+    'delete_order' => (new admincontroller())->delete_order(),
     default => (new admincontroller())->dashboard(),
 };
