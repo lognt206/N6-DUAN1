@@ -32,5 +32,12 @@ match ($act) {
     'edit_category' => (new admincontroller())->edit_category(),
     'update_category' => (new admincontroller())->update_category(),
     'delete_category' => (new admincontroller())->delete_category(),
+
+    'customer' => (new admincontroller())->customer(),
+
+    'edit_customer' => (new admincontroller())->edit_customer(),
+    'update_customer' => (new admincontroller())->update_customer(),
+
+    'delete_customer' => (new admincontroller())->delete_customer(),
     default => (new admincontroller())->dashboard(),
 };
