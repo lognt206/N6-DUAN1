@@ -12,34 +12,36 @@ class admincontroller
 
     // ===== DASHBOARD =====
     public function dashboard()
-    {
-        // Thống kê
-        $totalProducts = count($this->ProductModel->all());
+{
+    $totalProducts = count($this->ProductModel->all());
 
-        // demo (bạn có thể làm thật sau)
-        $totalCustomers = 0;
-        $totalOrders = 0;
-        $totalRevenue = 0;
+    $totalCustomers = 0;
+    $totalOrders = 0;
+    $totalRevenue = 0;
 
-        $chartLabels = [];
-        $chartValues = [];
+    $chartLabels = [];
+    $chartValues = [];
 
-        include PATH_ROOT . "views/admin/dashboard.php";
-    }
+    $view = PATH_ROOT . "views/admin/dashboard_content.php";
 
+    include PATH_ROOT . "views/admin/dashboard.php"; // layout
+}
     // ================= PRODUCT =================
 
     // Danh sách
     public function product()
-    {
-        $products = $this->ProductModel->all();
-        include PATH_ROOT . "views/admin/product/noidung.php";
-    }
+{
+    $products = $this->ProductModel->all();
+
+    $view = PATH_ROOT . "views/admin/product/noidung.php";
+
+    include PATH_ROOT . "views/admin/dashboard.php"; // layout
+}
 
     // Form thêm
     public function create_product()
     {
-        include PATH_ROOT . "views/admin/product/add.php";
+        include PATH_ROOT . "views/admin/product/create.php";
     }
 
     // Lưu sản phẩm
@@ -82,7 +84,7 @@ class admincontroller
         $id = $_GET['id'];
         $product = $this->ProductModel->find($id);
 
-        include PATH_ROOT . "views/admin/product/edit.php";
+        include PATH_ROOT . "views/admin/product/update.php";
     }
 
     // Update sản phẩm
