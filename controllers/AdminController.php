@@ -1,16 +1,18 @@
 <?php
 require_once __DIR__ . '/../models/ProductModel.php';
 require_once __DIR__ . '/../models/CategoryModel.php';
-
+require_once __DIR__ . '/../models/CustomerModel.php';
 class admincontroller
 {
     public $ProductModel;
     public $CategoryModel;
+    public $CustomerModel;
 
     public function __construct()
     {
         $this->ProductModel = new ProductModel();
-        $this->CategoryModel = new CategoryModel(); // 🔥 thêm
+        $this->CategoryModel = new CategoryModel();
+        $this->CustomerModel = new CustomerModel();
     }
 
     // ===== DASHBOARD =====
@@ -204,6 +206,57 @@ class admincontroller
         $this->CategoryModel->delete($id);
 
         header("Location: ?act=category");
+        exit;
+    }
+    // ===== CUSTOMER =====
+
+    // Danh sách
+    public function customer()
+    {
+        $customers = $this->CustomerModel->all();
+
+        $view = PATH_ROOT . "views/admin/customer/list.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    // Form sửa
+    public function edit_customer()
+    {
+        $id = $_GET['id'];
+        $customer = $this->CustomerModel->find($id);
+
+        $view = PATH_ROOT . "views/admin/customer/edit.php";
+        include PATH_ROOT . "views/admin/dashboard.php";
+    }
+
+    // Update
+    public function update_customer()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $data = [
+                'id'      => $_POST['id'],
+                'name'    => $_POST['name'],
+                'phone'   => $_POST['phone'],
+                'email'   => $_POST['email'],
+                'address' => $_POST['address'],
+            ];
+
+            $this->CustomerModel->update($data);
+
+            header("Location: ?act=customer");
+            exit;
+        }
+    }
+
+    // Xóa
+    public function delete_customer()
+    {
+        $id = $_GET['id'];
+
+        $this->CustomerModel->delete($id);
+
+        header("Location: ?act=customer");
         exit;
     }
 }
