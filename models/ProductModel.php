@@ -1,26 +1,31 @@
 <?php
 require_once __DIR__ . '/../commons/function.php';
 
-class ProductModel {
+class ProductModel
+{
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = connectDB();
     }
 
-    public function all() {
+    public function all()
+    {
         $stmt = $this->conn->prepare("SELECT * FROM products ORDER BY id DESC");
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
-    public function find($id) {
+    public function find($id)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM products WHERE id=?");
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
 
-    public function create($data) {
+    public function create($data)
+    {
         $stmt = $this->conn->prepare("INSERT INTO products(name, price, image) VALUES(?,?,?)");
         return $stmt->execute([
             $data['name'],
@@ -29,7 +34,8 @@ class ProductModel {
         ]);
     }
 
-    public function update($data) {
+    public function update($data)
+    {
         $stmt = $this->conn->prepare("UPDATE products SET name=?, price=?, image=? WHERE id=?");
         return $stmt->execute([
             $data['name'],
@@ -39,8 +45,16 @@ class ProductModel {
         ]);
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $stmt = $this->conn->prepare("DELETE FROM products WHERE id=?");
         return $stmt->execute([$id]);
+    }
+    public function countProducts()
+    {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM products");
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return $result['total'];
     }
 }
