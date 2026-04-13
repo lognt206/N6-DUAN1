@@ -47,7 +47,7 @@ class AuthController
     public function handle_register()
     {
         $data = [
-            'full_name' => $_POST['name'], // 🔥 sửa lại
+            'full_name' => $_POST['full_name'], // ✅ FIX
             'email' => $_POST['email'],
             'password' => $_POST['password']
         ];

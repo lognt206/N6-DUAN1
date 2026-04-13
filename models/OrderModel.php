@@ -130,4 +130,53 @@ class OrderModel
         $stmt->execute([$user_id]);
         return $stmt->fetchAll();
     }
+    public function getLatestOrders()
+    {
+        $sql = "SELECT o.*, 
+                   COALESCE(o.customer_name, u.full_name) as display_name
+            FROM orders o
+            LEFT JOIN users u ON o.user_id = u.id
+            ORDER BY o.id DESC
+            LIMIT 5";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    public function getRevenue()
+    {
+        $stmt = $this->conn->prepare("
+        SELECT SUM(total_price) as total 
+        FROM orders 
+        WHERE status = 'completed'
+    ");
+        $stmt->execute();
+        return $stmt->fetch()['total'] ?? 0;
+    }
+    public function getRevenueByMonth()
+    {
+        $stmt = $this->conn->prepare("
+        SELECT DATE_FORMAT(created_at, '%m/%Y') as month,
+               SUM(total_price) as revenue
+        FROM orders
+        WHERE status = 'completed'
+        GROUP BY month
+        ORDER BY MIN(created_at)
+    ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    public function getTopProducts()
+    {
+        $stmt = $this->conn->prepare("
+        SELECT p.name, SUM(oi.quantity) as sold
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        GROUP BY oi.product_id
+        ORDER BY sold DESC
+        LIMIT 5
+    ");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

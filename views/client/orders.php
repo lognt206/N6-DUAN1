@@ -153,8 +153,7 @@
             <div class="d-flex justify-content-between align-items-center mt-3">
 
                 <!-- NÚT XEM CHI TIẾT -->
-                <a href="?act=order_detail&id=<?= $o['id'] ?>"
-                    class="btn btn-outline-dark btn-sm">
+                <a href="?act=order_detail&id=<?= $o['id'] ?>" class="btn btn-sm btn-info">
                     🔍 Xem chi tiết
                 </a>
 

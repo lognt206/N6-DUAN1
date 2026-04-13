@@ -17,6 +17,7 @@
                     <th>ID</th>
                     <th>Tên danh mục</th>
                     <th>Số sản phẩm</th>
+                    <th>Trạng thái</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -29,26 +30,42 @@
 
                             <td><?= htmlspecialchars($c['name']) ?></td>
 
-                            <!-- Nếu chưa có count thì để 0 -->
                             <td><?= $c['total_products'] ?? 0 ?></td>
 
+                            <!-- ✅ TRẠNG THÁI -->
                             <td>
+                                <?php if (($c['total_products'] ?? 0) > 0): ?>
+                                    <span class="text-success">Đang dùng</span>
+                                <?php else: ?>
+                                    <span class="text-secondary">Trống</span>
+                                <?php endif; ?>
+                            </td>
+
+                            <td>
+                                <!-- Sửa -->
                                 <a href="?act=edit_category&id=<?= $c['id'] ?>"
                                    class="btn btn-warning btn-sm">
-                                    Sửa
+                                    ✏️ Sửa
                                 </a>
 
-                                <a href="?act=delete_category&id=<?= $c['id'] ?>"
-                                   onclick="return confirm('Xóa danh mục?')"
-                                   class="btn btn-danger btn-sm">
-                                    Xóa
-                                </a>
+                                <!-- ❌ Nếu có sản phẩm thì KHÔNG cho xóa -->
+                                <?php if (($c['total_products'] ?? 0) > 0): ?>
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        ❌ Không thể xóa
+                                    </button>
+                                <?php else: ?>
+                                    <a href="?act=delete_category&id=<?= $c['id'] ?>"
+                                       onclick="return confirm('Xóa danh mục này?')"
+                                       class="btn btn-danger btn-sm">
+                                        🗑️ Xóa
+                                    </a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="4" class="text-center text-muted">
+                        <td colspan="5" class="text-center text-muted">
                             Chưa có danh mục
                         </td>
                     </tr>
