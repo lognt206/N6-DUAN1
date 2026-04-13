@@ -179,4 +179,5 @@ class ClientController
         header("Location: ?act=orders");
         exit;
     }
+    
 }

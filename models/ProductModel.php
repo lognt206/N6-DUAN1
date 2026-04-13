@@ -10,7 +10,9 @@ class ProductModel
         $this->conn = connectDB();
     }
 
-    // Lấy tất cả sản phẩm + tên danh mục
+    // ================= ADMIN =================
+
+    // Lấy tất cả sản phẩm (admin thấy cả ngừng bán)
     public function all()
     {
         $sql = "SELECT p.*, c.name AS category_name
@@ -20,15 +22,33 @@ class ProductModel
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC); // 🔥 FIX
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // ================= CLIENT =================
+
+    // 🔥 CHỈ LẤY SẢN PHẨM ĐANG BÁN
+    public function getActiveProducts()
+    {
+        $sql = "SELECT p.*, c.name AS category_name
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                WHERE p.status = 1
+                ORDER BY p.id DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ================= CHUNG =================
 
     // Tìm 1 sản phẩm
     public function find($id)
     {
         $stmt = $this->conn->prepare("SELECT * FROM products WHERE id=?");
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC); // 🔥 FIX
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // Thêm
@@ -73,19 +93,30 @@ class ProductModel
         ]);
     }
 
-    // Xóa
+    // ================= SOFT DELETE =================
+
+    // ❌ XÓA THẬT -> ❌ BỎ
+    // ✅ NGỪNG BÁN
     public function delete($id)
     {
-        $stmt = $this->conn->prepare("DELETE FROM products WHERE id=?");
+        $stmt = $this->conn->prepare("UPDATE products SET status = 0 WHERE id=?");
         return $stmt->execute([$id]);
     }
 
-    // Đếm
+    // ♻️ BÁN LẠI
+    public function restore($id)
+    {
+        $stmt = $this->conn->prepare("UPDATE products SET status = 1 WHERE id=?");
+        return $stmt->execute([$id]);
+    }
+
+    // ================= THỐNG KÊ =================
+
     public function countProducts()
     {
         $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM products");
         $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC); // 🔥 FIX
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['total'];
     }
 }
