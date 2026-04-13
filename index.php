@@ -7,10 +7,15 @@ require_once './commons/function.php';
 
 // CONTROLLER
 require_once './controllers/admincontroller.php';
+require_once './controllers/AuthController.php';
+require_once './controllers/ClientController.php';
 
 // MODEL
 require_once './models/ProductModel.php';
-
+require_once './models/CategoryModel.php';
+require_once './models/CustomerModel.php';
+require_once './models/OrderModel.php';
+require_once './models/UserModel.php';
 // ROUTE
 $act = $_GET['act'] ?? 'dashboard';
 
@@ -40,9 +45,30 @@ match ($act) {
 
     'delete_customer' => (new admincontroller())->delete_customer(),
 
+    // ORDER
     'order' => (new admincontroller())->order(),
     'detail_order' => (new admincontroller())->detail_order(),
     'update_order_status' => (new admincontroller())->update_order_status(),
     'delete_order' => (new admincontroller())->delete_order(),
+
+    // CLIENT
+    'home' => (new ClientController())->home(),
+    'add_cart' => (new ClientController())->add_cart(),
+    'cart' => (new ClientController())->cart(),
+
+    'cart_update' => (new ClientController())->cart_update(), 
+    'cart_remove' => (new ClientController())->cart_remove(), 
+
+    'checkout' => (new ClientController())->checkout(),
+    'place_order' => (new ClientController())->place_order(),
+    'orders' => (new ClientController())->orders(),
+    'complete_order' => (new ClientController())->complete_order(),
+
+    // AUTH
+    'login' => (new AuthController())->login(),
+    'handle_login' => (new AuthController())->handle_login(),
+    'register' => (new AuthController())->register(),
+    'handle_register' => (new AuthController())->handle_register(),
+    'logout' => (new AuthController())->logout(),
     default => (new admincontroller())->dashboard(),
 };
