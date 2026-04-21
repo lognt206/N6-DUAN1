@@ -20,7 +20,8 @@ class ClientController
     // 🏠 Trang chủ
     public function home()
     {
-        $products = $this->ProductModel->all();
+        // 👉 chỉ nên dùng sản phẩm đang bán
+        $products = $this->ProductModel->getActiveProducts();
         $view = "views/client/home.php";
         include "views/layouts/client.php";
     }
@@ -37,19 +38,33 @@ class ClientController
 
         $product = $this->ProductModel->find($id);
 
-        if (!$product) {
+        if (!$product || $product['status'] != 1) {
             header("Location: ?act=home");
             exit;
         }
 
+        // 👉 chuẩn hóa dữ liệu
+        $unit = $product['unit'] ?? 'trái';
+        $image = !empty($product['image']) ? $product['image'] : 'no-image.png';
+
+        // 🔥 thêm mới
         if (!isset($_SESSION['cart'][$id])) {
             $_SESSION['cart'][$id] = [
                 'name' => $product['name'],
-                'price' => $product['price'],
-                'quantity' => 1
+                'price' => (float)$product['price'],
+                'quantity' => ($unit == 'kg') ? 0.1 : 1,
+                'unit' => $unit,
+                'image' => $image
             ];
-        } else {
-            $_SESSION['cart'][$id]['quantity']++;
+        } 
+        // 🔥 đã có → tăng đúng đơn vị
+        else {
+            if ($unit == 'kg') {
+                $_SESSION['cart'][$id]['quantity'] += 0.1;
+                $_SESSION['cart'][$id]['quantity'] = round($_SESSION['cart'][$id]['quantity'], 1);
+            } else {
+                $_SESSION['cart'][$id]['quantity'] += 1;
+            }
         }
 
         header("Location: ?act=home&msg=added");
@@ -66,10 +81,22 @@ class ClientController
     // 🔄 Update số lượng
     public function cart_update()
     {
-        $id = $_POST['id'] ?? null;
-        $qty = max(1, (int)($_POST['quantity'] ?? 1));
+        $id = $_GET['id'] ?? null;
+        $qty = $_GET['quantity'] ?? 1;
 
-        if ($id && isset($_SESSION['cart'][$id])) {
+        if ($id !== null && isset($_SESSION['cart'][$id])) {
+
+            $unit = $_SESSION['cart'][$id]['unit'];
+
+            if ($unit == 'kg') {
+                $qty = floatval($qty);
+                if ($qty < 0.1) $qty = 0.1;
+                $qty = round($qty, 1);
+            } else {
+                $qty = intval($qty);
+                if ($qty < 1) $qty = 1;
+            }
+
             $_SESSION['cart'][$id]['quantity'] = $qty;
         }
 
@@ -122,6 +149,7 @@ class ClientController
 
         $this->OrderModel->createOrder($data);
 
+        // 👉 clear cart sau khi đặt
         unset($_SESSION['cart']);
 
         header("Location: ?act=orders");
@@ -144,7 +172,7 @@ class ClientController
         include "views/layouts/client.php";
     }
 
-    // 🔍 CHI TIẾT ĐƠN HÀNG
+    // 🔍 Chi tiết đơn
     public function order_detail()
     {
         $id = $_GET['id'] ?? null;
@@ -157,7 +185,7 @@ class ClientController
         $order = $this->OrderModel->find($id);
         $items = $this->OrderModel->getItems($id);
 
-        // 🔥 chống xem trộm đơn
+        // 🔒 chống xem trộm
         if (!$order || $order['user_id'] != $_SESSION['user']['id']) {
             die("❌ Không có quyền truy cập!");
         }
@@ -172,12 +200,10 @@ class ClientController
         $id = $_GET['id'] ?? null;
 
         if ($id) {
-            // 🔥 dùng STRING (đúng chuẩn)
             $this->OrderModel->updateStatus($id, 'completed');
         }
 
         header("Location: ?act=orders");
         exit;
     }
-    
 }

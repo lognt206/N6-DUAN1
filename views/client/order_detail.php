@@ -1,39 +1,57 @@
 <style>
     .order-detail-card {
         border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
         padding: 20px;
         background: #fff;
     }
 
-    .order-header {
-        border-bottom: 1px solid #eee;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
+    .product-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
-    .order-info p {
-        margin: 5px 0;
+    .product-item img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
     }
 
-    .table thead {
-        background: #f8f9fa;
-    }
-
-    .table tbody tr:hover {
-        background: #f1f3f5;
+    .product-item img:hover {
+        transform: scale(1.05);
     }
 
     .total-box {
         font-size: 20px;
         font-weight: bold;
     }
+
+    /* POPUP */
+    #imgModal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #imgModal img {
+        max-width: 80%;
+        max-height: 80%;
+        border-radius: 12px;
+    }
 </style>
 
 <div class="order-detail-card">
 
     <!-- HEADER -->
-    <div class="order-header d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>📄 Chi tiết đơn #<?= $order['id'] ?></h4>
 
         <?php
@@ -46,7 +64,7 @@
         ];
         ?>
 
-        <span class="badge bg-<?=
+        <span class="badge bg-<?= 
             $order['status']=='pending'?'secondary':
             ($order['status']=='processing'?'info':
             ($order['status']=='shipping'?'primary':
@@ -57,34 +75,59 @@
     </div>
 
     <!-- INFO -->
-    <div class="order-info mb-3">
+    <div class="mb-3">
         <p><b>🕒 Ngày:</b> <?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></p>
-        <p><b>👤 Người nhận:</b> <?= $order['customer_name'] ?></p>
+        <p><b>👤 Người nhận:</b> <?= $order['customer_name'] ?? '---' ?></p>
         <p><b>📞 SĐT:</b> <?= $order['phone'] ?></p>
         <p><b>📍 Địa chỉ:</b> <?= $order['address'] ?></p>
     </div>
 
-    <!-- TABLE -->
+    <!-- LIST -->
     <div class="table-responsive">
-        <table class="table table-bordered align-middle text-center">
-            <thead>
+        <table class="table align-middle">
+            <thead class="table-light">
                 <tr>
                     <th class="text-start">Sản phẩm</th>
                     <th>Giá</th>
                     <th>SL</th>
-                    <th>Thành tiền</th>
+                    <th class="text-end">Thành tiền</th>
                 </tr>
             </thead>
+
             <tbody>
-                <?php foreach ($items as $i): ?>
+                <?php foreach ($items as $i): 
+                    $img = !empty($i['image'])
+                        ? "/N6-DUAN1/uploads/" . $i['image']
+                        : "https://via.placeholder.com/70";
+                ?>
+
                 <tr>
-                    <td class="text-start"><?= $i['name'] ?></td>
-                    <td><?= number_format($i['price']) ?>đ</td>
+                    <td class="text-start">
+                        <div class="product-item">
+                            <img src="<?= $img ?>"
+                                 onclick="openImage(this.src)"
+                                 onerror="this.src='https://via.placeholder.com/70'">
+
+                            <div>
+                                <div class="fw-semibold"><?= $i['name'] ?></div>
+                                <small class="text-muted">
+                                    <?= $i['description'] ?? '' ?>
+                                </small>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="text-danger">
+                        <?= number_format($i['price']) ?>đ
+                    </td>
+
                     <td><?= $i['quantity'] ?></td>
-                    <td class="text-danger fw-bold">
+
+                    <td class="text-end text-danger fw-bold">
                         <?= number_format($i['price'] * $i['quantity']) ?>đ
                     </td>
                 </tr>
+
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -102,3 +145,18 @@
     </div>
 
 </div>
+
+<!-- POPUP -->
+<div id="imgModal" onclick="closeImage()">
+    <img id="imgPreview">
+</div>
+
+<script>
+function openImage(src) {
+    document.getElementById("imgModal").style.display = "flex";
+    document.getElementById("imgPreview").src = src;
+}
+function closeImage() {
+    document.getElementById("imgModal").style.display = "none";
+}
+</script>
