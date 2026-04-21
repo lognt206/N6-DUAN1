@@ -39,16 +39,29 @@ if (!isset($_SESSION['user']) && !in_array($act, $publicRoutes)) {
 $adminRoutes = [
     'dashboard',
 
-    'product', 'create_product', 'store_product',
-    'edit_product', 'update_product', 'delete_product',
+    'product',
+    'create_product',
+    'store_product',
+    'edit_product',
+    'update_product',
+    'delete_product',
 
-    'category', 'create_category', 'store_category',
-    'edit_category', 'update_category', 'delete_category',
+    // ✅ THÊM DÒNG NÀY
+    'restore_product',
 
-    // 🔥 chỉ giữ customer LIST (không còn edit/delete)
+    'category',
+    'create_category',
+    'store_category',
+    'edit_category',
+    'update_category',
+    'delete_category',
+
     'customer',
 
-    'order', 'detail_order', 'update_order_status', 'delete_order'
+    'order',
+    'detail_order',
+    'update_order_status',
+    'delete_order'
 ];
 
 // 👉 Check quyền admin
@@ -94,7 +107,7 @@ match ($act) {
     'edit_product' => (new admincontroller())->edit_product(),
     'update_product' => (new admincontroller())->update_product(),
     'delete_product' => (new admincontroller())->delete_product(),
-
+    'restore_product' => (new admincontroller())->restore_product(),
     'category' => (new admincontroller())->category(),
     'create_category' => (new admincontroller())->create_category(),
     'store_category' => (new admincontroller())->store_category(),

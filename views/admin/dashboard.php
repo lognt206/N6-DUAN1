@@ -10,7 +10,7 @@ if (session_status() === PHP_SESSION_NONE) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fruit Admin Dashboard</title>
+    <title>FRESTY Admin Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -118,7 +118,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <!-- Sidebar -->
     <div id="sidebar">
-        <h3>Fruit Admin</h3>
+        <h3>FRESTY Admin</h3>
         <a href="?act=dashboard" class="<?= $act == 'dashboard' ? 'active' : '' ?>">
             <i class="fa-solid fa-chart-line"></i> Dashboard
         </a>
@@ -144,7 +144,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <div id="content">
 
         <div class="topbar">
-            <strong><i class="fa-solid fa-apple-whole"></i> Fruit Admin</strong>
+            <strong><i class="fa-solid fa-apple-whole"></i> FRESTY Admin</strong>
             <div>
                 <img src="uploads/logo.png" width="40" style="border-radius:50%">
                 <?= $_SESSION['user']['full_name'] ?? '' ?>
@@ -156,7 +156,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
     </div>
 
-    <footer>© 2025 Fruit Store</footer>
+    <footer>© 2025 fresty Store</footer>
 
     <script>
         const canvas = document.getElementById('revenueChart');

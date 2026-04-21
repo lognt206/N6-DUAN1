@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>🍉 Fruit Shop</title>
+    <title>🍉 FRESTY Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 
 <nav class="navbar navbar-dark bg-success px-3">
-    <a class="navbar-brand" href="?act=home">🍉 Fruit Shop</a>
+    <a class="navbar-brand" href="?act=home">🍉 FRESTY Shop</a>
 
     <div>
         <a href="?act=cart" class="btn btn-warning">🛒 Giỏ hàng</a>
